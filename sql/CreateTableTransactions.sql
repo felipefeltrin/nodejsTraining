@@ -1,0 +1,10 @@
+DROP TABLE IF EXISTS NodeJSTraining.Transactions;
+
+CREATE TABLE NodeJSTraining.Transactions (
+	ID INT NOT NULL,
+	TransactionDate VARCHAR(255) NOT NULL,
+	DeliveryDate VARCHAR(255) NOT NULL,
+	UserID INT NOT NULL,
+	PRIMARY KEY (ID),
+	FOREIGN KEY (UserID) REFERENCES NodeJSTraining.Users(ID)
+);

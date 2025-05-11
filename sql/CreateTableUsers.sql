@@ -1,0 +1,9 @@
+DROP TABLE IF EXISTS NodeJSTraining.Users;
+
+CREATE TABLE NodeJSTraining.Users (
+	ID INT NOT NULL,
+	FirstName VARCHAR(255) NOT NULL,
+	LastName VARCHAR(255) NOT NULL,
+	BirthDate DATE	NOT NULL,
+	PRIMARY KEY (ID)
+);
