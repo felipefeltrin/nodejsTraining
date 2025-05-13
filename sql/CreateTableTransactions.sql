@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS NodeJSTraining.Transactions;
 
 CREATE TABLE NodeJSTraining.Transactions (
-	ID INT NOT NULL,
+	ID INT NOT NULL AUTO_INCREMENT,
 	TransactionDate VARCHAR(255) NOT NULL,
 	DeliveryDate VARCHAR(255) NOT NULL,
 	UserID INT NOT NULL,

@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS NodeJSTraining.TransactionProducts;
 
 CREATE TABLE NodeJSTraining.TransactionProducts (
-	ID INT NOT NULL,
+	ID INT NOT NULL AUTO_INCREMENT,
 	TransactionID INT NOT NULL,
 	ProductID INT NOT NULL,
 	PRIMARY KEY (ID),
