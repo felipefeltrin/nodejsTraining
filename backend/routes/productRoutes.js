@@ -27,11 +27,11 @@ productRouter.get('/:ID', async (req, res) => {
   }
 });
 
-//Get product by Id
-productRouter.get('/:transactionID', async (req, res) => {
+//Get products by TransactionId
+productRouter.get('/transactions/:transactionID', async (req, res) => {
   const userAuthentication = await controller.checkAuthentication(req.headers.authorization);
   if(userAuthentication) {
-    const response = await controller.getByTransactionID(req.params.ID);
+    const response = await controller.getListByTransactionID(req.params.transactionID);
     res.status(response.status).send(response.message);
   } else {
     res.status(userAuthentication.status).send(userAuthentication.message);
@@ -42,7 +42,7 @@ productRouter.get('/:transactionID', async (req, res) => {
 productRouter.post('/', async (req, res) => {
   const userAuthentication = await controller.checkAuthentication(req.headers.authorization);
   if(userAuthentication) {
-    const response = await controller.createUser(req.body);
+    const response = await controller.create(req.body);
     res.status(response.status).send(response.message);
   } else {
     res.status(userAuthentication.status).send(userAuthentication.message);
@@ -53,7 +53,7 @@ productRouter.post('/', async (req, res) => {
 productRouter.patch('/:ID', async (req, res) => {
   const userAuthentication = await controller.checkAuthentication(req.headers.authorization);
   if(userAuthentication) {
-    const response = await controller.updateUser(req.body, req.params.ID);
+    const response = await controller.update(req.body, req.params.ID);
     res.status(response.status).send(response.message);
   } else {
     res.status(userAuthentication.status).send(userAuthentication.message);

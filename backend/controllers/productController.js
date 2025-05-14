@@ -6,27 +6,49 @@ export default class ProductController extends BaseController {
   object = new Product();
   blockedUpdateFields = ["ID", "Name"];
 
-  async getByTransactionID(transactionID) {
+  async subtractProductQuantity(ID, quantity) {
     try {
-      const sql = `SELECT P.* FROM ${this.tableName} P
-                    JOIN TransactionProducts TP
-                    ON TP.ProductID = P.ID
-                    WHERE TransactionID = ?`;
-      
+      const product = (await this.getByID(ID)).message;
+      const sql = `UPDATE ${this.tableName} SET StockQuantity = ? - ? WHERE ID = ?`;
+
       await this.connectToDatabase();
-      const results = await this.conn.promise().query(sql, transactionID);
+      const results = await this.conn.promise().query(sql, [product.StockQuantity, quantity, ID]);
       await this.disconnectFromDatabase();
 
-      if (results[0].length === 0) {
+      if (results[0].affectedRows === 0) {
         return {
           status: 404,
-          message: "No products found for the transaction" + transactionID
+          message: "No products found with ID" + ID
         };
       }
-
+      
       return {
         status: 200,
-        message: results[0]
+        message: results[0].affectedRows
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async increaseProductQuantity(ID, quantity) {
+    try {
+      const product = (await this.getByID(ID)).message;
+      const sql = `UPDATE ${this.tableName} SET StockQuantity = ? + ? WHERE ID = ?`;
+
+      await this.connectToDatabase();
+      const results = await this.conn.promise().query(sql, [product.StockQuantity, quantity, ID]);
+      await this.disconnectFromDatabase();
+
+      if (results[0].affectedRows === 0) {
+        return {
+          status: 404,
+          message: "No products found with ID" + ID
+        };
+      }
+      return {
+        status: 200,
+        message: results[0].affectedRows
       };
     } catch (error) {
         throw error;

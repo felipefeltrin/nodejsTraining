@@ -53,7 +53,7 @@ userRouter.patch('/:ID', async (req, res) => {
 userRouter.delete('/:ID', async (req, res) => {
   const userAuthentication = await controller.checkAuthentication(req.headers.authorization);
   if(userAuthentication) {
-    const response = await controller.deleteUser(req.params.ID);
+    const response = await controller.delete(req.params.ID);
     res.status(response.status).send(response.message);
   } else {
     res.status(userAuthentication.status).send(userAuthentication.message);

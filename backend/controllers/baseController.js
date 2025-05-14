@@ -14,6 +14,7 @@ export default class BaseController {
 
   object = new Object();
   blockedUpdateFields = ["ID"];
+  noDatabaseFields = [];
   
   //SQL connection methods
   async connectToDatabase() {
@@ -44,17 +45,24 @@ export default class BaseController {
       await this.connectToDatabase();
       const results = await this.conn.promise().query(sql);
       await this.disconnectFromDatabase();
+      const items = results[0];
 
-      if (results[0].length === 0) {
+      if (items.length === 0) {
         return {
           status: 404,
-          message: "No users found"
+          message: "No items found"
         };
+      }
+      
+      const responseList = [];
+      for(let i = 0; i < items.length; i++) {
+        const newObject = await this.object.setNew(items[i]);
+        responseList.push(newObject);
       }
 
       return {
         status: 200,
-        message: results[0]
+        message: responseList
       };
     } catch (error) {
         throw error;
@@ -72,13 +80,12 @@ export default class BaseController {
       if (results[0].length === 0) {
         return {
           status: 404,
-          message: "User not found for ID: " + ID
+          message: "Item not found for ID: " + ID
         };
       }
-      
       return {
         status: 200,
-        message: new User().setUser(results[0][0])
+        message: await this.object.setNew(results[0][0])
       };
     } catch (error) {
       throw error;
@@ -88,17 +95,20 @@ export default class BaseController {
   async create(data) {
     try {
       Object.keys(data).forEach(field => {
+        if(field === "ID") {
+          throw "ID is auto-generated and cannot be mannually inserted."
+        }
         if(!this.object.hasOwnProperty(field)) {
           throw `Invalid field ${field} detected on body`;
         }
-        if(field == "Password") {
+        if(field === "Password") {
           data[field] = MD5(data[field]).toString();
         }
       });
       let paramsString = "";
       let insertFieldString = "";
       Object.keys(this.object).forEach(insertField => {
-        if(insertField != "ID"){
+        if(insertField !== "ID" && !this.noDatabaseFields.includes(insertField)){
           insertFieldString += insertField + ", ";
           paramsString += "?, "
         }
@@ -125,7 +135,7 @@ export default class BaseController {
       let sql = `UPDATE ${this.tableName} SET `
       let fieldCount = 0;
       Object.keys(userData).forEach(field => {
-        if(this.object.hasOwnProperty(field) && !this.blockedUpdateFields.includes(field)) {
+        if(this.object.hasOwnProperty(field) && !this.blockedUpdateFields.includes(field) && !this.noDatabaseFields.includes(field)) {
           fieldCount++;
           sql += `${field} = '${userData[field]}', `
         }

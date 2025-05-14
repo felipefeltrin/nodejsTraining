@@ -4,6 +4,6 @@ CREATE TABLE NodeJSTraining.Products (
 	ID INT NOT NULL AUTO_INCREMENT,
 	Name VARCHAR(255) NOT NULL,
 	Price DECIMAL(18,2) NOT NULL,
-	Quantity int	NOT NULL,
+	StockQuantity int	NOT NULL,
 	PRIMARY KEY (ID)
 );

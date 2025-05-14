@@ -6,7 +6,7 @@ export default class User {
   Username = null;
   Password = null;
 
-  setUser(userData) {
+  setNew(userData) {
     if(userData.ID && userData.ID !== this.getID()) {
       this.setID(userData.ID);
       this.setFirstName(userData.FirstName);

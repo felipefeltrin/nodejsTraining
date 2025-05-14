@@ -2,14 +2,14 @@ export default class Product {
   ID = null;
   Name = null;
   Price = null;
-  Quantity = null;
+  StockQuantity = null;
 
-  setProduct(productData) {
+  setNew(productData) {
     if(productData.ID && productData.ID !== this.getID()) {
-      this.setID(productData.ID6);
-      this.setName(productData.Name6);
-      this.setPrice(productData.Price6);
-      this.setQuantity(productData.Quantity6);
+      this.setID(productData.ID);
+      this.setName(productData.Name);
+      this.setPrice(productData.Price);
+      this.setStockQuantity(productData.StockQuantity);
     }
     return this;
   }
@@ -38,13 +38,11 @@ export default class Product {
     this.Price = newPrice;
   }
 
-  getQuantity() {
-    return this.Quantity;
+  getStockQuantity() {
+    return this.StockQuantity;
   }
 
-  setQuantity(newQuantity) {
-    this.Quantity = newQuantity;
+  setStockQuantity(newStockQuantity) {
+    this.StockQuantity = newStockQuantity;
   }
-
-
 }
