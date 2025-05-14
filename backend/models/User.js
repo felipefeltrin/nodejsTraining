@@ -4,7 +4,7 @@ export default class User {
   LastName = null;
   BirthDate = null;
 
-  constructor(userFields) {
+  setUser(userData) {
     if(userFields.ID && userFields.ID !== this.getID()) {
       this.setID(userFields.ID);
       this.setFirstName(userFields.FirstName);

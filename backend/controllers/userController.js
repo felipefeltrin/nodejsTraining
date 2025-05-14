@@ -1,47 +1,25 @@
-import mysql from 'mysql2';
-import 'dotenv/config';
 import User from '../models/User.js';
+import DatabaseController from './databaseController';
 
+const dbController = new DatabaseController();
 export default class UserContoller {
-  conn = mysql.createConnection({
-    host: process.env.SQLHOST,
-    user: process.env.SQLUSER,
-    password: process.env.SQLPASSWORD
-  });
-
-  async connectToDatabase() {
-    try {
-      if(this.conn.state === 'disconnected'){
-        this.conn.promise().connect();
-        console.log('Connection started.');
-      }
-    } catch (error) {
-      throw errror;
-    }
-  }
-
-  async disconnectFromDatabase() {
-    try {
-      if(this.conn.state !== 'disconnected'){
-        this.conn.promise().end();
-        console.log('Connection closed.');
-      }
-    } catch (error) {
-      throw errror;
-    }
-  }
-
   async getList() {
     try {
       const sql = "SELECT * FROM NodeJSTraining.Users";
       
-      await this.connectToDatabase();
-      const results = await this.conn.promise().query(sql);
-      await this.disconnectFromDatabase();
+      await dbController.connectToDatabase();
+      const results = await dbController.conn.promise().query(sql);
+      await dbController.disconnectFromDatabase();
       if (results[0].length === 0) {
-        return "No users found";
+        return {
+          status: 404,
+          message: "No users found"
+        };
       }
-      return results[0];
+        return {
+          status: 200,
+          message: results[0]
+        };
     } catch (error) {
         throw error;
     }
@@ -51,13 +29,20 @@ export default class UserContoller {
     try {
       const sql = "SELECT * FROM NodeJSTraining.Users WHERE ID = ?";
       
-      await this.connectToDatabase();
-      const results = await this.conn.promise().query(sql, ID);
-      await this.disconnectFromDatabase();
+      await dbController.connectToDatabase();
+      const results = await dbController.conn.promise().query(sql, ID);
+      await dbController.disconnectFromDatabase();
       if (results[0].length === 0) {
-        return "User not found for ID: " + ID;
+        return {
+          status: 404,
+          message: "User not found for ID: " + ID
+        };
       }
-      return new User(results[0][0]);
+      
+        return {
+          status: 200,
+          message: new User().setUser(results[0][0])
+        };
     } catch (error) {
         throw error;
     }
@@ -67,17 +52,19 @@ export default class UserContoller {
     try {
       const user = new User();
       Object.keys(userData).forEach(field => {
-        if(!user.fields.hasOwnProperty(field)) {
+        if(!user.hasOwnProperty(field)) {
           throw `Invalid field ${field} detected on body`;
         }
       });
       const sql = "INSERT INTO NodeJSTraining.Users (FirstName, LastName, BirthDate) VALUES (?, ?, ?)";
-      await this.connectToDatabase();
-      const result = await this.conn.promise().query(sql, Object.values(userData));
-      await this.disconnectFromDatabase();
+      await dbController.connectToDatabase();
+      const result = await dbController.conn.promise().query(sql, Object.values(userData));
+      await dbController.disconnectFromDatabase();
 
-      console.log(result[0].insertId);
-      return result[0].insertId;
+      return {
+        status: 200,
+        message: result[0].insertId
+      };
     } catch (error) {
       throw error;
     }
@@ -85,26 +72,33 @@ export default class UserContoller {
 
   async updateUser(userData, ID) {
    try {
-      let sql = "UPDATE NodeJSTraining.Users SET"
+     const user = new User();
+      const blockedFields = ["ID", "birthDate"]
+      let sql = "UPDATE NodeJSTraining.Users SET "
       let fieldCount = 0;
       Object.keys(userData).forEach(field => {
-        if(User.fields.hasOwnProperty(field) && field != "ID") {
+        if(user.hasOwnProperty(field) && !blockedFields.includes(field)) {
           fieldCount++;
-          sql += `${userData[field]}, `
+          sql += `${field} = '${userData[field]}', `
         }
       });
-      console.log(params);
-      sql += `WHERE ID = ?`;
-
+      sql = sql .replace(/(, $)/g, "");
+      sql += ` WHERE ID = ?`;
       if(fieldCount === 0) {
-        return "No valid fields were found to update";
+        return {
+          status: 406,
+          message: "No valid fields were found to update"
+        };
       }
 
-      await this.connectToDatabase();
-      const result = await this.conn.promise().query(sql, ID);
-      await this.disconnectFromDatabase();
+      await dbController.connectToDatabase();
+      const result = await dbController.conn.promise().query(sql, ID);
+      await dbController.disconnectFromDatabase();
 
-      return result[0].affectedRows;
+      return {
+        status: 200,
+        message: "Affected users: " + result[0].affectedRows
+      };
    } catch (error) {
     throw error;
    }
@@ -114,11 +108,14 @@ export default class UserContoller {
     try {
       const sql = "DELETE FROM NodeJSTraining.Users WHERE ID = ?";
 
-      await this.connectToDatabase();
-      const result = await this.conn.promise().query(sql, userData);
-      await this.disconnectFromDatabase();
+      await dbController.connectToDatabase();
+      const result = await dbController.conn.promise().query(sql, ID);
+      await dbController.disconnectFromDatabase();
 
-      return result[0].affectedRows;
+      return {
+        status: 200,
+        message: "Affected users: " + result[0].affectedRows
+      };
     } catch (error) {
         throw error;
     }
