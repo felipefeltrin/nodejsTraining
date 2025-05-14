@@ -12,7 +12,6 @@ export default class User {
       this.setFirstName(userData.FirstName);
       this.setLastName(userData.LastName);
       this.setBirthDate(userData.BirthDate);
-      this.setUsername(userData.Username);
     }
     return this;
   }
@@ -47,13 +46,5 @@ export default class User {
 
   setBirthDate(newBirthDate) {
     this.BirthDate = newBirthDate;
-  }
-
-  getUsername() {
-    return this.Username;
-  }
-
-  setUsername(newUsername) {
-    this.Username = newUsername;
   }
 }
