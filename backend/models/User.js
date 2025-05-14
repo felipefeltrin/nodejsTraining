@@ -3,14 +3,18 @@ export default class User {
   FirstName = null;
   LastName = null;
   BirthDate = null;
+  Username = null;
+  Password = null;
 
   setUser(userData) {
-    if(userFields.ID && userFields.ID !== this.getID()) {
-      this.setID(userFields.ID);
-      this.setFirstName(userFields.FirstName);
-      this.setLastName(userFields.LastName);
-      this.setBirthDate(userFields.BirthDate);
+    if(userData.ID && userData.ID !== this.getID()) {
+      this.setID(userData.ID);
+      this.setFirstName(userData.FirstName);
+      this.setLastName(userData.LastName);
+      this.setBirthDate(userData.BirthDate);
+      this.setUsername(userData.Username);
     }
+    return this;
   }
 
   getID() {
@@ -43,5 +47,13 @@ export default class User {
 
   setBirthDate(newBirthDate) {
     this.BirthDate = newBirthDate;
+  }
+
+  getUsername() {
+    return this.Username;
+  }
+
+  setUsername(newUsername) {
+    this.Username = newUsername;
   }
 }

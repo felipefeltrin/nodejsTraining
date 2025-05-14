@@ -1,15 +1,13 @@
 import User from '../models/User.js';
-import DatabaseController from './databaseController';
-
-const dbController = new DatabaseController();
-export default class UserContoller {
+import BaseController from './baseController.js';
+export default class UserContoller extends BaseController {
   async getList() {
     try {
       const sql = "SELECT * FROM NodeJSTraining.Users";
       
-      await dbController.connectToDatabase();
-      const results = await dbController.conn.promise().query(sql);
-      await dbController.disconnectFromDatabase();
+      await this.connectToDatabase();
+      const results = await this.conn.promise().query(sql);
+      await this.disconnectFromDatabase();
       if (results[0].length === 0) {
         return {
           status: 404,
@@ -29,9 +27,9 @@ export default class UserContoller {
     try {
       const sql = "SELECT * FROM NodeJSTraining.Users WHERE ID = ?";
       
-      await dbController.connectToDatabase();
-      const results = await dbController.conn.promise().query(sql, ID);
-      await dbController.disconnectFromDatabase();
+      await this.connectToDatabase();
+      const results = await this.conn.promise().query(sql, ID);
+      await this.disconnectFromDatabase();
       if (results[0].length === 0) {
         return {
           status: 404,
@@ -57,9 +55,9 @@ export default class UserContoller {
         }
       });
       const sql = "INSERT INTO NodeJSTraining.Users (FirstName, LastName, BirthDate) VALUES (?, ?, ?)";
-      await dbController.connectToDatabase();
-      const result = await dbController.conn.promise().query(sql, Object.values(userData));
-      await dbController.disconnectFromDatabase();
+      await this.connectToDatabase();
+      const result = await this.conn.promise().query(sql, Object.values(userData));
+      await this.disconnectFromDatabase();
 
       return {
         status: 200,
@@ -91,9 +89,9 @@ export default class UserContoller {
         };
       }
 
-      await dbController.connectToDatabase();
-      const result = await dbController.conn.promise().query(sql, ID);
-      await dbController.disconnectFromDatabase();
+      await this.connectToDatabase();
+      const result = await this.conn.promise().query(sql, ID);
+      await this.disconnectFromDatabase();
 
       return {
         status: 200,
@@ -108,9 +106,9 @@ export default class UserContoller {
     try {
       const sql = "DELETE FROM NodeJSTraining.Users WHERE ID = ?";
 
-      await dbController.connectToDatabase();
-      const result = await dbController.conn.promise().query(sql, ID);
-      await dbController.disconnectFromDatabase();
+      await this.connectToDatabase();
+      const result = await this.conn.promise().query(sql, ID);
+      await this.disconnectFromDatabase();
 
       return {
         status: 200,
